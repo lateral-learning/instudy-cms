@@ -22,4 +22,6 @@ function ReactRoot() {
 
 export default ReactRoot;
 
-ReactDOM.render(<ReactRoot />, document.getElementById("react-root"));
+window.addEventListener("DOMContentLoaded", () => {
+    ReactDOM.render(<ReactRoot />, document.getElementById("react-root"));
+});

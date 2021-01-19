@@ -1943,7 +1943,9 @@ function ReactRoot() {
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ReactRoot);
-react_dom__WEBPACK_IMPORTED_MODULE_2__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(ReactRoot, {}), document.getElementById("react-root"));
+window.addEventListener("DOMContentLoaded", function () {
+  react_dom__WEBPACK_IMPORTED_MODULE_2__.render( /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx)(ReactRoot, {}), document.getElementById("react-root"));
+});
 
 /***/ }),
 

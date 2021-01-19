@@ -15,7 +15,6 @@
                     @endif
                     <!-- React JS -->
                     <div id="react-root"></div>
-                    <script src="{{ asset('js/app.js') }}"></script>
                     {{ __('You are logged in!') }}
                 </div>
             </div>
