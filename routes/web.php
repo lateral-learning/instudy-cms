@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,6 +20,25 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Auth::routes([
+    'register' => false, // Registration Routes...
+    'reset' => false, // Password Reset Routes...
+    'verify' => false, // Email Verification Routes...
+]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/cmsUploadStudy', [App\Http\Controllers\cmsUploadFileController::class, 'index']);
+
+Route::post('/uploadStudy', [App\Http\Controllers\UploadFileController::class, 'index']);
+
+Route::post('/success', function () {
+    return view('success');
+})->name("success");
+
+/* DECOMMENTARE PER ACCEDERE AL CONFIG INIZIALE
+Route::get('/initial_config', function () {
+    $migration = Artisan::call('migrate', []);
+    $seed = Artisan::call('db:seed', []);
+});
+*/
