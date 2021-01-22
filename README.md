@@ -28,8 +28,9 @@ Gli unici file degni di note apparte l'env, sono
 
 ## PROBLEMI
 
-Per qualche motivo va MOLTO lento (ci mette secondi prima di completare la richiesta), forse però è solo il development server che fa così;
-spero che in production vada più veloce, altrimenti andrà trovato un fix
+-   Per qualche motivo va MOLTO lento (ci mette secondi prima di completare la richiesta), forse però è solo il development server che fa così;
+    spero che in production vada più veloce, altrimenti andrà trovato un fix
+    -   Va ancora fatta un'impostazione per permettere all'app di funzionare in una sottocartella del server (cms)
 
 ## REACT
 
