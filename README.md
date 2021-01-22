@@ -1,12 +1,12 @@
 ## COME FAR PARTIRE
 
 -   Creare sul proprio computer una folder structure di questo tipo
-    instudy
-    ├── cms
-    ├── projects
-    ├── projectsRepo
-    └── res
-    .....└── projectIcons
+    -   instudy (sarebbe la root)
+        -   cms
+        -   projects
+        -   projectsRepo
+        -   res
+            -   projectIcons
 -   Fare il git clone della repo dentro la cartella cms
 -   (Il resto delle cartelle serve solo a simulare quella che sarà la folder structure dell'app sul server; se si ha già la versione locale dell'app instudy allora tanto vale usare quella e mettere solo la cartella cms)
 -   Assicurarsi di avere un server MySQL in ascolto sulla porta 3306 (es. con XAMPP su Windows)
