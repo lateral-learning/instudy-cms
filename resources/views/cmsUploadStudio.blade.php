@@ -14,7 +14,7 @@
         <input type="file" name="filePNG" style="min-width:600px;height:90px;border:1px solid black;background:rgb(245,245,245);" />
     </label>
     <label>Nome studio:
-        <input name="name" />
+        <input name="nameStudy" value="" />
         <p style="font-size:0.8rem;color:orangered;margin-bottom:0;">Opzionale, si può anche lasciare vuoto per avere come nome il nome del file</p>
     </label>
     <label>
