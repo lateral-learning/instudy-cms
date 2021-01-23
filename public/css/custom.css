@@ -1,0 +1,12 @@
+.warner {
+    font-size: 0.8rem;
+    color: orangered !important;
+    margin-bottom: 0;
+}
+
+.inputFile {
+    min-width: 600px;
+    height: 90px;
+    border: 1px solid black;
+    background: rgb(245, 245, 245);
+}

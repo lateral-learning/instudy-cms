@@ -1,4 +1,4 @@
-## COME FAR PARTIRE
+## COME FAR PARTIRE IN LOCALE
 
 -   Creare sul proprio computer una folder structure di questo tipo
     -   instudy (sarebbe la root)
@@ -14,6 +14,7 @@
 -   Creare un secondo database di nome instudy_cms (anche questo nome può essere cambiato)
 -   php artisan migrate
 -   php artisan db:seed
+-   installare gli script con npm install && npm run dev (a volte ti chiede di ripetere il comando)
 -   nella cartella cms, far partire php artisan serve
 
 ## DOVE POSSO ESEGUIRE LE MODIFICHE?
@@ -28,9 +29,7 @@ Gli unici file degni di note apparte l'env, sono
 
 ## PROBLEMI
 
--   Per qualche motivo va MOLTO lento (ci mette secondi prima di completare la richiesta), forse però è solo il development server che fa così;
-    spero che in production vada più veloce, altrimenti andrà trovato un fix
-    -   Va ancora fatta un'impostazione per permettere all'app di funzionare in una sottocartella del server (cms)
+-   Va molto lento quando si fa partire una richiesta
 
 ## REACT
 
@@ -38,18 +37,25 @@ Non è attivato perchè ancora non serve. Per attivarlo bisognerebbe decommentar
 
 # NOTE SUI 2 DATABASE
 
-Per via del fatto che c'era già un database, onde evitare di dover ricostruirlo nei modelli e per fare una cosa veloce
-ho fatto le query a mano.
+Per evitare di dover rifare i modelli avendo già un DB, non è stato usato Eloquent ma SQL raw.
 
-Ci sono due connessioni al database:
+per evitare conflitti ho preferito separare i dati in due database:
 
 -   mysql2: quello in cui stanno tutti i dati dell'app
--   mysql: quello in cui metto i dati di autenticazione; ho preferito evitare di mischiare i due db onde evitare problemi
+-   mysql: quello in cui metto i dati di autenticazione
 
-I parametri di configurazione sono nel file env (cambia solo il nome db: andrà cambiato prima di mettere in production)
+I parametri di configurazione sono nel file env (tra le due connessioni cambia solo il DB)
 
 ## SVUOTARE CACHE
 
-Se capitano problemi inspiegabili dopo qualche cambio di impostazioni, probabilmente va fatto questo
+Se capitano problemi dopo qualche cambio di impostazioni, probabilmente va lanciato questo comando
 
 php artisan config:clear
+
+# INSTALLAZIONE SU SHARED HOSTING APACHE
+
+1. Istruzioni base per installazione
+   https://stackoverflow.com/questions/41407758/how-to-install-laravel-app-in-subfolder-of-shared-host
+2. modificare il file .ENV per mettere i dati giusti (avendo due database come descritto prima)
+3. Proteggere tutti i dati sempre tramite .htaccess
+   https://gist.github.com/shakee93/7222b7f2429b467731211cd0dce35410

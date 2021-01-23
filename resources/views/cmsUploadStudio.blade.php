@@ -7,15 +7,15 @@
     @csrf
     <label>
         File ZIP
-        <input type="file" name="fileZIP" style="min-width:600px;height:90px;border:1px solid black;background:rgb(245,245,245);" />
+        <input type="file" name="fileZIP" class="inputFile" required />
     </label>
     <label>
         Img PNG
-        <input type="file" name="filePNG" style="min-width:600px;height:90px;border:1px solid black;background:rgb(245,245,245);" />
+        <input type="file" name="filePNG" class="inputFile" required />
     </label>
     <label>Nome studio:
         <input name="nameStudy" value="" />
-        <p style="font-size:0.8rem;color:orangered;margin-bottom:0;">Opzionale, si può anche lasciare vuoto per avere come nome il nome del file</p>
+        <p class="warner">Opzionale, si può anche lasciare vuoto per avere come nome il nome del file</p>
     </label>
     <label>
         Prodotto
@@ -43,11 +43,12 @@
     </label>
     <label>
         Groups
-        <select name="groups[]" multiple>
+        <select name="groups[]" multiple required>
             @foreach ($groups as $group)
             <option value="{{ $group->id }}">{{ $group->name }}</option>
             @endforeach
         </select>
+        <p class="warner">Selezionarne almeno uno, selezionarne più di uno usando CTRL + click</p>
     </label>
     <label>
         Ricerca attivata
@@ -65,10 +66,17 @@
     </label>
     <label>
         Ordine (numero)
-        <input type="number" name="order" style="width:90px;" value="1" />
-        <!-- <p style="font-size:0.8rem;color:orangered;margin-bottom:0;">Lasciare vuoto per metterlo alla fine</p> -->
+        <!-- {{--
+        <select name="order">
+        @foreach ($orders as $order)
+        <option value="{{ $order->i }}">{{ $order->i }} ({{ $order->item || 'Libero!' }})</option>
+        @endforeach
+        </select>
+        --}} -->
+        <input type="number" name="order" style="width:90px;" value="1" required />
+        <p class="warner">Gli studi con lo stesso valore Ordine e tutti quelli successivi verranno "spinti" automaticamente di una posizione</p>
     </label>
-    <input type="submit" value="Invia" style="width:150px;margin-top:18px;margin-right:auto;" />
+    <input type="submit" value="Invia" onclick="this.disabled=true; this.value='Attendere...'; this.form.submit();" style="width:150px;margin-top:18px;margin-right:auto;" />
 
 </form>
 

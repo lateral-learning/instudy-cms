@@ -42,7 +42,7 @@ class UploadFileController extends Controller
     {
         $groupData = $request->input('groups'); // array
         $studyData = [
-            "name" => $request->input('nameStudy') || $fileName,
+            "name" => is_string($request->input('nameStudy')) ? $request->input('nameStudy') : $fileName,
             "code" => $this->encodeSpaces($fileName),
             "product" => $request->input('product'),
             "section" => $request->input('section'),
@@ -72,9 +72,9 @@ class UploadFileController extends Controller
     protected function execQueries(array $studyData, array $groupData)
     {
         $this->DB->beginTransaction();
+        $this->alterOrder->pushOrder($studyData['order'], "categoryRef={$studyData['category']}");
         $studyRef = $this->insertStudy($studyData);
         $this->insertGroupStudyRelations($groupData, $studyRef);
-        $this->alterOrder->pushOrder($studyData['order'], "categoryRef={$studyData['category']}");
         $this->DB->commit();
     }
 
@@ -119,7 +119,7 @@ class AlterOrder
         if (is_int($orderValue)) {
             $condition = $condition ? "AND $condition" : "";
             $this->DB->update(
-                "UPDATE {$this->table} SET {$this->orderColumn}={$this->orderColumn}+1 WHERE {$this->orderColumn}<=$orderValue $condition"
+                "UPDATE {$this->table} SET {$this->orderColumn}={$this->orderColumn}+1 WHERE {$this->orderColumn}>=$orderValue $condition"
             );
         } else {
             abort(422, "Il valore orderValue non è di tipo Integer");

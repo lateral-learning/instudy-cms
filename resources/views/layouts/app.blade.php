@@ -12,7 +12,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('js/dnd.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -20,6 +19,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
 </head>
 
 <body>
@@ -65,10 +65,10 @@
                                                      document.getElementById('logout-form').submit();">
                                     {{ __('Logout') }}
                                 </a>
-
                                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                     @csrf
                                 </form>
+                                <a class="dropdown-item" target="_blank" href="https://lhcp1123.webapps.net:2083/cpsess9497228953/3rdparty/phpMyAdmin/db_structure.php?server=1&db=hj2jbnva_lilly.instudy">DB (PHPMyAdmin)</a>
                             </div>
                         </li>
                         @endguest
