@@ -77,14 +77,14 @@
             </div>
         </nav>
 
-        <main class="py-4">
-            <div class="container">
-                <div class="row justify-content-center" style="flex-direction:column;align-items:center;justify-content:center;">
-                    @yield('beforecontent')
-                    @yield('content')
-                </div>
-            </div>
-        </main>
+        <!-- <main class="py-4">
+            <div class="container">-->
+        <div class="row justify-content-center" style="margin:0; padding-top:20px; flex-direction:column;align-items:center;justify-content:center;">
+            @yield('beforecontent')
+            @yield('content')
+        </div>
+        <!--</div>
+        </main> -->
     </div>
 </body>
 

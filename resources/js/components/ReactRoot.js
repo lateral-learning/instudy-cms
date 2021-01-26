@@ -8,5 +8,5 @@ function ReactRoot() {
 export default ReactRoot;
 
 window.addEventListener("DOMContentLoaded", () => {
-    ReactDOM.render(<ReactRoot />, document.getElementById("react-root"));
+    //ReactDOM.render(<ReactRoot />, document.getElementById("react-root"));
 });

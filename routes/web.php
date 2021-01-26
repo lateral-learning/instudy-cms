@@ -30,9 +30,15 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::get('/cmsUploadStudy', [App\Http\Controllers\cmsUploadFileController::class, 'index']);
 
+Route::get('/cmsAddUser', [App\Http\Controllers\cmsAddUserController::class, 'index']);
+
 Route::post('/uploadStudy', [App\Http\Controllers\UploadFileController::class, 'index']);
 
-Route::post('/success', function () {
+Route::post('/addUser', [App\Http\Controllers\AddUserController::class, 'index']);
+
+Route::get('/resetPassword', [App\Http\Controllers\ResetPasswordController::class, 'index']);
+
+Route::any('/success', function () {
     return view('success');
 })->name("success");
 

@@ -10,3 +10,64 @@
     border: 1px solid black;
     background: rgb(245, 245, 245);
 }
+
+h1 {
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex.wrap {
+    flex-wrap: wrap;
+}
+
+.flex.row {
+    flex-direction: row;
+}
+
+.flex.column {
+    flex-direction: column;
+}
+
+.flex.center {
+    justify-content: center;
+}
+
+.flex.middle {
+    align-items: center;
+}
+
+.w100 {
+    width: 100%;
+    margin: 0;
+}
+
+.w50 {
+    flex-basis: 50%;
+    flex-grow: 1;
+}
+
+.panelContainer {
+    overflow: scroll;
+    padding: 20px;
+}
+
+.helpFooter {
+    display: none !important;
+}
+
+.tableStudies td {
+    width: 50px;
+    max-width: 300px;
+    overflow-wrap: break-word;
+}
+
+.tableStudies input {
+    max-width: 100px;
+}
+
+.hideInside * {
+    visibility: hidden !important;
+}
