@@ -3,6 +3,6 @@
 @section('content')
 
 <h3 style="color:green">Operazione completata con successo</h3>
-<button onclick="window.history.back();">Indietro</button>
+<button onclick="window.location=document.referrer;">Indietro</button>
 
 @endsection

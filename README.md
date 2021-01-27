@@ -35,7 +35,7 @@ Gli unici file degni di note apparte l'env, sono
 
 Non è attivato perchè ancora non serve. Per attivarlo bisognerebbe decommentare l'elemento root nella pagina
 
-# NOTE SUI 2 DATABASE
+## NOTE SUI 2 DATABASE
 
 Per evitare di dover rifare i modelli avendo già un DB, non è stato usato Eloquent ma SQL raw.
 
@@ -52,10 +52,16 @@ Se capitano problemi dopo qualche cambio di impostazioni, probabilmente va lanci
 
 php artisan config:clear
 
-# INSTALLAZIONE SU SHARED HOSTING APACHE
+## INSTALLAZIONE SU SHARED HOSTING APACHE
 
 1. Istruzioni base per installazione
    https://stackoverflow.com/questions/41407758/how-to-install-laravel-app-in-subfolder-of-shared-host
 2. modificare il file .ENV per mettere i dati giusti (avendo due database come descritto prima)
 3. Proteggere tutti i dati sempre tramite .htaccess
    https://gist.github.com/shakee93/7222b7f2429b467731211cd0dce35410
+
+## MAIL DI RESET
+
+Ho preso le funzionalità dello script di Sasha ma le ho implementate con il Mailer di Laravel
+
+**Per il futuro ricordarsi di circondare i parametri nel file ENV con "" se contengono il carattere #**

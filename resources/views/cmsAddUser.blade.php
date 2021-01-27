@@ -100,10 +100,11 @@
                 });
 
                 const columnPassword = 9;
+                const columnMail = 1;
 
                 $('.tableUsers tbody').on('click', 'button', function() {
                     const data = table.row($(this).parents('tr')).data();
-                    if (confirm("Vuoi resettare la pw?")) window.location.href = './resetPassword?passwordRef=' + data[columnPassword];
+                    if (confirm("Vuoi resettare la pw?")) window.location.href = `./resetPassword?passwordRef=${data[columnPassword]}&mail=${data[columnMail]}`
                 });
             });
         </script>
