@@ -2,12 +2,12 @@
 
 -   Creare sul proprio computer una folder structure di questo tipo
     -   instudy (sarebbe la root)
-        -   cms
         -   projects
         -   projectsRepo
         -   res
             -   projectIcons
--   Fare il git clone della repo dentro la cartella cms
+-   Fare il git clone della repo dentro la root
+-   rinominare instudy-cms in cms
 -   (Il resto delle cartelle serve solo a simulare quella che sarà la folder structure dell'app sul server; se si ha già la versione locale dell'app instudy allora tanto vale usare quella e mettere solo la cartella cms)
 -   Assicurarsi di avere un server MySQL in ascolto sulla porta 3306 (es. con XAMPP su Windows)
 -   Creare un database di nome hj2jbnva_lilly.instudy e buttarci i dati dell'app (se si vuole usare un nome diverso basta cambiarlo nel file ENV)
