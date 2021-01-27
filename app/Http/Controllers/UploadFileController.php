@@ -62,15 +62,14 @@ class UploadFileController extends Controller
     {
         $ROOT = UploadFileController::ROOT;
         $folderPath = $this->extractZIP($fileZIP->path(), "$ROOT/projects/$fileZIPname/");
-        $zipPath = $this->moveFile($fileZIP, "{$fileZIPname}.zip", "$ROOT/projectsRepo/");
+        $this->modifyFiles($folderPath);
+        $this->createZIPFromFolder($folderPath, "$ROOT/projectsRepo/", "{$fileZIPname}.zip");
         $this->moveFile($filePNG, "{$fileZIPname}_IMG.png", "$ROOT/res/projectIcons/");
-        $this->modifyFiles($folderPath, $zipPath);
     }
 
-    protected function modifyFiles(String $folderPath, String $zipPath)
+    protected function modifyFiles(String $folderPath)
     {
-        // $folderPath: la cartella dove sono i files in versione già decompressa (es. projects/abc/)
-        // $zipPath: il percorso del file zip (es. projectsRepo/abc.zip)
+        // $folderPath: la cartella dove sono i files in versione decompressa (es. projects/abc/)
     }
 
     protected function execQueries(array $studyData, array $groupData)

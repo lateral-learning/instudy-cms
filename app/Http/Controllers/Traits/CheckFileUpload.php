@@ -65,4 +65,30 @@ trait CheckFileUpload
         $zip->close();
         return $destination;
     }
+
+    protected function createZIPFromFolder(String $folderPath, String $zipPath, String $zipFileName)
+    {
+        $rootPath = realpath($folderPath);
+        $zip = new \ZipArchive();
+        $zip->open($zipPath . $zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        /** @var \SplFileInfo[] $files */
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($rootPath),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        foreach ($files as $name => $file) {
+            if (!$file->isDir()) {
+                $filePath = $file->getRealPath();
+                $relativePath = substr($filePath, strlen($rootPath) + 1);
+                $zip->addFile($filePath, $relativePath);
+            } else {
+                $end2 = substr($file, -2);
+                if ($end2 == "/.") {
+                    $folder = substr($file, 0, -2);
+                    $zip->addEmptyDir($folder);
+                }
+            }
+        }
+        $zip->close();
+    }
 }
