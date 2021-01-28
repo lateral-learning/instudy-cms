@@ -6,6 +6,11 @@
         -   projectsRepo
         -   res
             -   projectIcons
+        -   utils
+            -   projData
+                -   modContent.html
+                -   modContent2.html
+                    (questi 2 file vanno presi dalla repo instudy skeleton)
 -   Fare il git clone della repo dentro la root
 -   rinominare instudy-cms in cms
 -   composer install
