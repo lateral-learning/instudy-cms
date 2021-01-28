@@ -8,9 +8,11 @@
             -   projectIcons
 -   Fare il git clone della repo dentro la root
 -   rinominare instudy-cms in cms
+-   composer install
 -   (Il resto delle cartelle serve solo a simulare quella che sarà la folder structure dell'app sul server; se si ha già la versione locale dell'app instudy allora tanto vale usare quella e mettere solo la cartella cms)
 -   Assicurarsi di avere un server MySQL in ascolto sulla porta 3306 (es. con XAMPP su Windows)
 -   Creare un database di nome hj2jbnva_lilly.instudy e buttarci i dati dell'app (se si vuole usare un nome diverso basta cambiarlo nel file ENV)
+-   (I dati del DB dovrebbero essere quelli con la struttura aggiornata)
 -   Creare un secondo database di nome instudy_cms (anche questo nome può essere cambiato)
 -   php artisan migrate
 -   php artisan db:seed
