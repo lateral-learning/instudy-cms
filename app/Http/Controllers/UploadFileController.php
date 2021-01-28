@@ -29,14 +29,14 @@ class UploadFileController extends Controller
     {
         [$fileZIP, $filePNG, $fileZIPname] = $this->getFileData($request);
         [$studyData, $groupData] = $this->getRequestData($request, $fileZIPname);
-        $this->fileOperations($fileZIP, $filePNG, $fileZIPname);
+        $this->fileOperations($fileZIP, $filePNG, $fileZIPname, $studyData['launcher']);
         $this->execQueries($studyData, $groupData);
         return view('success');
     }
 
     protected function getFileData(Request $request)
     {
-        $fileZIP = $this->checkFile($request, "fileZIP", "zip", ["story_html5.html", "story_content/frame.xml"]);
+        $fileZIP = $this->checkFile($request, "fileZIP", "zip", [$request->input('launcher'), "story_content/frame.xml"]);
         $filePNG = $this->checkFile($request, "filePNG", "png");
         $fileZIPname = pathinfo($fileZIP->getClientOriginalName())['filename'];
         return [$fileZIP, $filePNG, $fileZIPname];
@@ -53,23 +53,39 @@ class UploadFileController extends Controller
             "category" => $request->input('category'),
             "order" => intval($request->input('order')),
             "search" => intval($request->input('search')),
-            "type" => $request->input('type')
+            "type" => $request->input('type'),
+            "launcher" => $request->input('launcher')
         ];
         return [$studyData, $groupData];
     }
 
-    protected function fileOperations(\Illuminate\Http\UploadedFile $fileZIP, \Illuminate\Http\UploadedFile $filePNG, String $fileZIPname)
+    protected function fileOperations(\Illuminate\Http\UploadedFile $fileZIP, \Illuminate\Http\UploadedFile $filePNG, String $fileZIPname, String $studyLauncher)
     {
         $ROOT = UploadFileController::ROOT;
         $folderPath = $this->extractZIP($fileZIP->path(), "$ROOT/projects/$fileZIPname/");
-        $this->modifyFiles($folderPath);
+
+        // do modify only if it is a Storyline study
+        if ($studyLauncher === "story.html" || $studyLauncher === "story_html5.html")
+            $this->modifyFiles($folderPath, $studyLauncher);
+
         $this->createZIPFromFolder($folderPath, "$ROOT/projectsRepo/", "{$fileZIPname}.zip");
         $this->moveFile($filePNG, "{$fileZIPname}_IMG.png", "$ROOT/res/projectIcons/");
     }
 
-    protected function modifyFiles(String $folderPath)
+    protected function modifyFiles(String $folderPath, String $studyLauncher)
     {
         // $folderPath: la cartella dove sono i files in versione decompressa (es. projects/abc/)
+        $ROOT = UploadFileController::ROOT;
+
+        if ($studyLauncher === "story.html")
+            $modContentFile = "$ROOT/utils/projData/modContent2.html";
+        else if ($studyLauncher === "story_html5.html")
+            $modContentFile = "$ROOT/utils/projData/modContent.html";
+
+        $storyFile = $folderPath . $studyLauncher;
+        $file_data = file_get_contents($modContentFile);
+        $file_data .= file_get_contents($storyFile);
+        file_put_contents($storyFile, $file_data);
     }
 
     protected function execQueries(array $studyData, array $groupData)

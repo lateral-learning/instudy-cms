@@ -26,8 +26,8 @@ class cmsAddUserController extends Controller
     public function index()
     {
         $data = [];
-        $data['divisions'] = $this->DB->select("SELECT divisionId as id, divisionName as name FROM instudy_divisions");
-        $data['users'] = $this->DB->select("SELECT * FROM instudy_users");
+        $data['groups'] = $this->DB->select("SELECT groupid as id, groupName as name FROM instudy_groups");
+        $data['users'] = $this->DB->select("SELECT instudy_users.* FROM instudy_users");
         return view('cmsAddUser', $data);
     }
 }

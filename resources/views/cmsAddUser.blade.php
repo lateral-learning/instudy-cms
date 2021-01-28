@@ -15,12 +15,17 @@
                 <input name="mail" value="" style="width:220px;" required />
             </label>
             <label>
-                Divisione
-                <select name="division">
-                    @foreach ($divisions as $division)
-                    <option value="{{ $division->id }}">{{ $division->name }}</option>
+                Groups
+                <select name="groups[]" multiple required>
+                    @foreach ($groups as $group)
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
                     @endforeach
                 </select>
+                <p class="warner">Selezionarne almeno uno, selezionarne più di uno usando CTRL + click</p>
+            </label>
+            <label>
+                Divisione
+                <input name="division" />
             </label>
             <label>
                 Policy

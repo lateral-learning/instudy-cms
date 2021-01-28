@@ -18,26 +18,29 @@ class AddUserController extends Controller
 
     public function index(Request $request)
     {
-        $userData = $this->getRequestData($request);
-        $this->execQueries($userData);
+        [$userData, $groupData] = $this->getRequestData($request);
+        $this->execQueries($userData, $groupData);
         return view('success');
     }
 
     protected function getRequestData(Request $request)
     {
-        return [
+        $groupData = $request->input('groups');
+        $userData = [
             "name" => $request->input('nameUser'),
             "email" => $request->input('mail'),
-            "division" => intval($request->input('division')),
             "policy" => intval($request->input('policy')),
+            "division" => !empty($request->input('division')) ? $request->input('division') : '',
         ];
+        return [$userData, $groupData];
     }
 
-    protected function execQueries(array $studyData)
+    protected function execQueries(array $userData, array $groupData)
     {
         $this->DB->beginTransaction();
         $passwordRef = $this->insertPassword();
-        $this->insertUser($studyData, $passwordRef);
+        $userRef = $this->insertUser($userData, $passwordRef);
+        $this->insertUserGroupRelations($userRef, $groupData);
         $this->DB->commit();
     }
 
@@ -47,15 +50,27 @@ class AddUserController extends Controller
         return $this->insertedID();
     }
 
-    protected function insertUser(array $studyData, $passwordRef)
+    protected function insertUser(array $userData, $passwordRef)
     {
         $this->DB->insert(
             "
-            INSERT INTO instudy_users (name,email,divisionRef,policy,passwordRef,lastDevice)
+            INSERT INTO instudy_users (name,email,policy,division,passwordRef,lastDevice)
             VALUES(?,?,?,?,?,'')
         ",
-            [...array_values($studyData), $passwordRef] // strip off the keys and add passwordRef
+            [...array_values($userData), $passwordRef] // strip off the keys and add passwordRef
         );
         return $this->insertedID();
+    }
+
+    protected function insertUserGroupRelations(Int $userRef, array $groupData)
+    {
+        $countGroups = count($groupData);
+        if ($countGroups) {
+            $listRelations = implode(",", array_fill(0, $countGroups, "($userRef,?)"));
+            $this->DB->insert(
+                "INSERT INTO `instudy_user-group` (userRef,groupRef) VALUES $listRelations",
+                $groupData
+            );
+        }
     }
 }

@@ -61,10 +61,14 @@
             </label>
             <label>
                 Tipo
-                <select name="type">
-                    <option value="story_v1" selected>story_v1</option>
-                    <option value="story_v2">story_v2</option>
+                <select name="type" onchange="document.querySelector('[name=launcher]').value=this.options[this.selectedIndex].getAttribute('data-launcher')">
+                    <option value="story_v1" data-launcher="story_html5.html" selected>story_v1</option>
+                    <option value="story_v2" data-launcher="story.html">story_v2</option>
                 </select>
+            </label>
+            <label>
+                Launcher
+                <input name="launcher" value="story_html5.html" />
             </label>
             <label>
                 Ordine (numero)
