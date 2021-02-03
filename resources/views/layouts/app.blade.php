@@ -20,6 +20,73 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
+
+
+    <style>
+        .linkUpdate::after {
+            content: " (Clicca qui per modificare) "
+        }
+
+        .warner.onupdate {
+            display: none;
+        }
+
+        .mainTitle.updateElement~form .warner.onupdate {
+            display: inline;
+        }
+    </style>
+
+    <script>
+        function toDataAttributes(obj) {
+            return Object.entries(obj).map(([k, v]) => `data-${k}='${v}'`).join(" ");
+        }
+
+        document.addEventListener("click", function(evt) {
+            const link = evt.target.closest(".linkUpdate");
+            if (link) {
+                const dataset = Object.entries(link.dataset);
+                const id = dataset[0][1];
+                document.querySelector(".mainTitle").innerText = "Aggiorna l'elemento " + id
+                document.querySelector(".mainTitle").classList.add("updateElement");
+
+                dataset.forEach(([k, v]) => {
+                    if (k === "studygroups") v = v.split(',');
+                    switch (k) {
+                        case "groups":
+                            if (v) {
+                                const groupSelects = [...document.querySelectorAll("[name='groups[]']")];
+                                const groups = v.split(',');
+                                groupSelects.forEach((s) => s.selectedIndex = 0); // reset index
+                                groups.forEach((g, i) => {
+                                    const select = groupSelects[i];
+                                    const options = [...select.options];
+                                    select.selectedIndex = options.findIndex((o) =>
+                                        o.innerText === g
+                                    );
+                                })
+                            }
+                            break;
+                        default:
+                            const input = document.querySelector(`[name=${k}],[name='${k}[]']`);
+                            if (input.tagName.toLowerCase() !== "select") {
+                                input.value = v;
+                            } else {
+                                v = Array.isArray(v) ? v : [v];
+                                [...input.options].forEach((o) => o.selected = v.find(_v => _v === o.value || _v === o.innerText))
+                            }
+                            break;
+                    }
+                });
+
+
+                //document.querySelector(".updateid").value = id
+
+
+            }
+        })
+    </script>
+
+
 </head>
 
 <body>

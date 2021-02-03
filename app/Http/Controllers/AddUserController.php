@@ -18,29 +18,37 @@ class AddUserController extends Controller
 
     public function index(Request $request)
     {
-        [$userData, $groupData] = $this->getRequestData($request);
-        $this->execQueries($userData, $groupData);
+        [$userData, $groupData, $updateUserRef] = $this->getRequestData($request);
+        $this->execQueries($userData, $groupData, $updateUserRef);
         return view('success');
     }
 
     protected function getRequestData(Request $request)
     {
-        $groupData = $request->input('groups');
+        $groupData = array_values(array_unique(array_filter($request->input('groups'), function ($element) {
+            return $element !== "" && $element !== NULL;
+        })));
+        $updateUserRef = !empty($request->input('updateid')) ? intval($request->input('updateid')) : 0;
         $userData = [
-            "name" => $request->input('nameUser'),
+            "name" => $request->input('nameuser'),
             "email" => $request->input('mail'),
-            "policy" => intval($request->input('policy')),
+            "policy" => 0,
             "division" => !empty($request->input('division')) ? $request->input('division') : '',
         ];
-        return [$userData, $groupData];
+        return [$userData, $groupData, $updateUserRef];
     }
 
-    protected function execQueries(array $userData, array $groupData)
+    protected function execQueries(array $userData, array $groupData, int $updateUserRef)
     {
         $this->DB->beginTransaction();
-        $passwordRef = $this->insertPassword();
-        $userRef = $this->insertUser($userData, $passwordRef);
-        $this->insertUserGroupRelations($userRef, $groupData);
+        if (empty($updateUserRef)) {
+            $passwordRef = $this->insertPassword();
+            $userRef = $this->insertUser($userData, $passwordRef);
+        } else {
+            $this->updateUser($userData, $updateUserRef);
+            $this->deleteUserGroupRelations($updateUserRef);
+        }
+        $this->insertUserGroupRelations($userRef ?? $updateUserRef, $groupData);
         $this->DB->commit();
     }
 
@@ -62,15 +70,34 @@ class AddUserController extends Controller
         return $this->insertedID();
     }
 
+    protected function updateUser(array $userData, int $updateUserRef)
+    {
+        $this->DB->update(
+            "UPDATE instudy_users SET name=?, email=?, policy=?, division=? WHERE userId=?",
+            [...array_values($userData), $updateUserRef]
+        );
+    }
+
     protected function insertUserGroupRelations(Int $userRef, array $groupData)
     {
         $countGroups = count($groupData);
         if ($countGroups) {
-            $listRelations = implode(",", array_fill(0, $countGroups, "($userRef,?)"));
+            $listRelations = implode(",", array_map(function ($i) use ($userRef) {
+                $order = $i + 1;
+                return "($userRef,?,$order)";
+            }, range(0, $countGroups - 1)));
             $this->DB->insert(
-                "INSERT INTO `instudy_user-group` (userRef,groupRef) VALUES $listRelations",
+                "INSERT INTO `instudy_user-group` (userRef,groupRef,groupOrder) VALUES $listRelations",
                 $groupData
             );
         }
+    }
+
+    protected function deleteUserGroupRelations(Int $updateUserRef)
+    {
+        $this->DB->delete(
+            "DELETE FROM `instudy_user-group` WHERE userRef=?",
+            [$updateUserRef]
+        );
     }
 }

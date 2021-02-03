@@ -4,36 +4,69 @@
 
 <div class="flex row w100">
     <div class="flex column w50 panelContainer" id="loadUser">
-        <h1>Aggiungi un User</h1>
+        <h1 class="mainTitle">Aggiungi un User</h1>
         <form action="./addUser" method="POST" class="flex column">
             @csrf
+            <input type="hidden" name="updateid" value="" />
             <label>Nome user:
-                <input name="nameUser" value="" style="width:220px;" required />
+                <input name="nameuser" value="" style="width:220px;" required />
             </label>
             <label>
                 Mail
                 <input name="mail" value="" style="width:220px;" required />
             </label>
             <label>
-                Groups
-                <select name="groups[]" multiple required>
-                    @foreach ($groups as $group)
-                    <option value="{{ $group->id }}">{{ $group->name }}</option>
-                    @endforeach
-                </select>
-                <p class="warner">Selezionarne almeno uno, selezionarne più di uno usando CTRL + click</p>
-            </label>
-            <label>
                 Divisione
                 <input name="division" />
             </label>
-            <label>
-                Policy
-                <select name="policy">
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                </select>
-            </label>
+            <div id="parent">
+                <script>
+                    let dragindex = 0;
+                    let dropindex = 0;
+                    let clone = "";
+
+                    function drag(e) {
+                        e.dataTransfer.setData("text", e.target.id);
+                    }
+
+                    function drop(e) {
+                        e.preventDefault();
+                        clone = e.target.closest(".draggableGroup").cloneNode(true);
+                        clone.querySelector("select").selectedIndex = e.target.closest(".draggableGroup").querySelector("select").selectedIndex;
+                        let data = e.dataTransfer.getData("text");
+                        let nodelist = document.getElementById("parent").childNodes;
+                        for (let i = 0; i < nodelist.length; i++) {
+                            if (nodelist[i].id == data) {
+                                dragindex = i;
+                            }
+
+                        }
+                        document.getElementById("parent").replaceChild(document.getElementById(data), e.target.closest(".draggableGroup"));
+                        document.getElementById("parent").insertBefore(clone, document.getElementById("parent").childNodes[dragindex]);
+                    }
+
+                    function allowDrop(e) {
+                        e.preventDefault();
+                    }
+                </script>
+                Groups
+                <p class="warner">Le select con valori nulli o duplicati vengono automaticamente ignorate</p>
+                @foreach (range(0,15) as $rangeIndex)
+                <div class="draggableGroup" style="width:280px;background:#aaa;" id="draggable{{$rangeIndex}}" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <select name="groups[]">
+                        <option value="" selected />Nessuna selezione</option>
+                        @foreach ($groups as $group)
+
+                        <option value="{{ $group->id }}" />{{ $group->name }}</option>
+
+                        @endforeach
+                    </select>
+                    drag 🕂
+                </div>
+                @endforeach
+                <p class="warner">Il numero di select è fisso ma può essere aumentato nel codice</p>
+            </div>
+
             <input type="submit" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
         </form>
     </div>
@@ -90,7 +123,13 @@
                     order: [
                         [0, 'desc']
                     ],
-                    dom: 'Plfrtip'
+                    dom: 'Plfrtip',
+                    "columnDefs": [{
+                        "render": function(data, type, row) {
+                            return `<a class='linkUpdate' href='javascript:void(0);' ${toDataAttributes({updateid:row[0], mail:row[1], nameuser:row[2], division:row[8], groups:row[10]})}>${data}</a>`;
+                        },
+                        "targets": 0
+                    }]
                 });
 
                 table.columns().every(function() {

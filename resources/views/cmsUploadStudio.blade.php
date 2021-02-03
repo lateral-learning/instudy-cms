@@ -4,19 +4,22 @@
 
 <div class="flex row w100">
     <div class="flex column w50 panelContainer" id="loadStudy">
-        <h1>Carica uno studio</h1>
+        <h1 class="mainTitle">Carica uno studio</h1>
         <form action="./uploadStudy" method="POST" enctype="multipart/form-data" class="flex column">
             @csrf
+            <input type="hidden" name="updateid" value="" />
+            <p class="warner onupdate">Puoi lasciare i campi zip e immagine vuoti se non devi cambiarli</p>
+            <p class="warner onupdate">Attenzione: se si cambia lo zip bisogna anche rimettere l'immagine, anche se è la stessa di prima</p>
             <label>
                 File ZIP
-                <input type="file" name="fileZIP" class="inputFile" required />
+                <input type="file" name="fileZIP" class="inputFile" />
             </label>
             <label>
                 Img PNG
-                <input type="file" name="filePNG" class="inputFile" required />
+                <input type="file" name="filePNG" class="inputFile" />
             </label>
             <label>Nome studio:
-                <input name="nameStudy" value="" />
+                <input name="namestudy" value="" />
                 <p class="warner">Opzionale, si può anche lasciare vuoto per avere come nome il nome del file</p>
             </label>
             <label>
@@ -45,7 +48,7 @@
             </label>
             <label>
                 Groups
-                <select name="groups[]" multiple required>
+                <select name="studygroups[]" multiple required>
                     @foreach ($groups as $group)
                     <option value="{{ $group->id }}">{{ $group->name }}</option>
                     @endforeach
@@ -64,6 +67,8 @@
                 <select name="type" onchange="document.querySelector('[name=launcher]').value=this.options[this.selectedIndex].getAttribute('data-launcher')">
                     <option value="story_v1" data-launcher="story_html5.html" selected>story_v1</option>
                     <option value="story_v2" data-launcher="story.html">story_v2</option>
+                    <option value="video" data-launcher="video.mp4">video</option>
+                    <option value="story_v1" data-launcher="story_html5.html">altro</option>
                 </select>
             </label>
             <label>
@@ -72,15 +77,21 @@
             </label>
             <label>
                 Ordine (numero)
-                <!-- {{--
-        <select name="order">
-        @foreach ($orders as $order)
-        <option value="{{ $order->i }}">{{ $order->i }} ({{ $order->item || 'Libero!' }})</option>
-        @endforeach
-        </select>
-        --}} -->
+
+                <!--{{--<select name="order">
+                    @foreach (range(0,10) as $rangeIndex)
+                    <option value="{{ $rangeIndex }}">{{ $rangeIndex }} ({{ $orders[$rangeIndex]->item ?? '-- Libero --' }})</option>
+                @endforeach
+                </select> --}} -->
+
                 <input type="number" name="order" style="width:90px;" value="1" required />
                 <p class="warner">Gli studi con lo stesso valore Ordine e tutti quelli successivi verranno "spinti" automaticamente di una posizione</p>
+            </label>
+            <label>Data inizio
+                <input name="startdate" type="datetime-local" />
+            </label>
+            <label>Data fine
+                <input name="enddate" type="datetime-local" />
             </label>
             <input type="submit" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
 
@@ -138,7 +149,17 @@
                     order: [
                         [0, 'desc']
                     ],
-                    dom: 'Plfrtip'
+                    dom: 'Plfrtip',
+                    "columnDefs": [{
+                        "render": function(data, type, row) {
+                            return `<a class='linkUpdate' href='javascript:void(0);' ${toDataAttributes({
+                                updateid:row[0], namestudy:row[1], product:row[3], section:row[4], category:row[5],
+                                order: row[6], search: row[7], type: row[8], launcher:row[9],
+                                startdate: row[11].replace(" ", "T"), enddate:row[12].replace(" ", "T"), studygroups: row[13]
+                            })}>${data}</a>`;
+                        },
+                        "targets": 0
+                    }]
                 });
 
                 table.columns().every(function() {

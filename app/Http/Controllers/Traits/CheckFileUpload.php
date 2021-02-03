@@ -15,7 +15,7 @@ trait CheckFileUpload
                     return $file;
             }
         }
-        abort(406, "Assente il file .$extension di nome $fieldName");
+        //abort(406, "Assente il file .$extension di nome $fieldName");
         return null;
     }
 
@@ -49,13 +49,7 @@ trait CheckFileUpload
         if (count($intersection) === count($toCheckFiles)) {
             return true;
         }
-        abort(
-            422,
-            "Sono assenti uno o più file nello zip RICHIESTI: " .
-                implode(', ', $toCheckFiles) .
-                " PRESENTI: " . implode(', ', $filesInside)
-        );
-        return false;
+        return null;
     }
 
     protected function extractZIP(String $filePath, String $destination)

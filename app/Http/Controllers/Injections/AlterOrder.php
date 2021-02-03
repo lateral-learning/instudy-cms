@@ -14,9 +14,9 @@ class AlterOrder
     public function pushOrder(Int $orderValue, String $condition = "")
     {
         if (is_int($orderValue)) {
-            $condition = $condition ? "AND $condition" : "";
+            $ANDcondition = $condition ? "AND $condition" : "";
             $this->DB->update(
-                "UPDATE {$this->table} SET {$this->orderColumn}={$this->orderColumn}+1 WHERE {$this->orderColumn}>=$orderValue $condition"
+                "UPDATE {$this->table} SET {$this->orderColumn}={$this->orderColumn}+1 WHERE {$this->orderColumn}>=$orderValue $ANDcondition"
             );
         } else {
             abort(422, "Il valore orderValue non è di tipo Integer");
