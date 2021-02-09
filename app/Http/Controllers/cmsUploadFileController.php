@@ -31,10 +31,11 @@ class cmsUploadFileController extends Controller
         $data['categories'] = $this->DB->select("SELECT categoryId as id, name FROM instudy_categories");
         $data['groups'] = $this->DB->select("SELECT groupid as id, groupName as name FROM instudy_groups");
         $data['studies'] = $this->DB->select(
-            "SELECT instudy_studies.*,
+            "SELECT instudy_studies.studyId, instudy_studies.name, instudy_studies.productRef, instudy_studies.sectionRef, instudy_studies.categoryRef,
+            instudy_studies.studyOrder, instudy_studies.search, instudy_studies.type, instudy_studies.launcher, instudy_studies.date, instudy_studies.startDate, instudy_studies.endDate,
             GROUP_CONCAT((SELECT groupName FROM instudy_groups WHERE groupId=`instudy_group-study`.groupRef)  SEPARATOR ',') AS gruppi
             FROM instudy_studies
-            INNER JOIN `instudy_group-study`
+            LEFT JOIN `instudy_group-study`
             ON `instudy_group-study`.studyRef=instudy_studies.studyId
             GROUP BY instudy_studies.studyId, instudy_studies.name, instudy_studies.code, instudy_studies.productRef, instudy_studies.sectionRef, instudy_studies.categoryRef,
                      instudy_studies.studyOrder, instudy_studies.search, instudy_studies.type, instudy_studies.launcher, instudy_studies.date, instudy_studies.startDate, instudy_studies.endDate

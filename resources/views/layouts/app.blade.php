@@ -34,6 +34,10 @@
         .mainTitle.updateElement~form .warner.onupdate {
             display: inline;
         }
+
+        [name=delete][value=''] {
+            display: none;
+        }
     </style>
 
     <script>
@@ -48,6 +52,8 @@
                 const id = dataset[0][1];
                 document.querySelector(".mainTitle").innerText = "Aggiorna l'elemento " + id
                 document.querySelector(".mainTitle").classList.add("updateElement");
+                document.querySelector("[name=delete]").value = "Cancella Elemento";
+                document.querySelector("[name=invia]").value = "Update";
 
                 dataset.forEach(([k, v]) => {
                     if (k === "studygroups") v = v.split(',');
@@ -56,7 +62,7 @@
                             if (v) {
                                 const groupSelects = [...document.querySelectorAll("[name='groups[]']")];
                                 const groups = v.split(',');
-                                groupSelects.forEach((s) => s.selectedIndex = 0); // reset index
+                                changeNumberOfDraggables(() => groups.length);
                                 groups.forEach((g, i) => {
                                     const select = groupSelects[i];
                                     const options = [...select.options];
@@ -64,6 +70,60 @@
                                         o.innerText === g
                                     );
                                 })
+                            }
+                            break;
+                        case "users":
+                            if (v) {
+                                const userInputs = [...document.querySelectorAll("[name='users[]']")];
+                                const users = v.split(', ');
+                                userInputs.forEach((inp) => {
+                                    inp.checked = users.find((u) => u === inp.parentNode.innerText)
+                                })
+                            }
+                            break;
+                        case "studies_x_group":
+                            if (v) {
+                                function k(_) {
+                                    console.log(_);
+                                    return _;
+                                }
+                                const studies = v.split(', ');
+                                const studiesInfo = STUDIES.filter(S => studies.find(s => s.toString() === S.id.toString()));
+                                const products = [...new Set(studiesInfo.map(si => si.productRef))]
+                                const sections = (studiesInfo.map(si => si.sectionRef))
+                                const categories = (studiesInfo.map(si => si.categoryRef))
+                                const addProducts = window.addDraggables(".product");
+                                const addSections = window.addDraggables(".section");
+                                const addCategories = window.addDraggables(".category");
+                                const addStudies = window.addDraggables(".study");
+                                addProducts(() => products.length);
+                                [...document.querySelectorAll("[name='product[]']")].forEach((s, j) => s.selectedIndex = [...s.options].findIndex(o => o.value.toString() === products[j].toString()));
+                                [...document.querySelectorAll(".product")].forEach((p, j) => {
+                                    const innerSections = [...new Set(sections.filter(sec => studiesInfo.find((s) => s.sectionRef.toString() === sec.toString() && s.productRef.toString() === products[j].toString())))]
+                                    addSections(() => innerSections.length, p);
+                                    [...p.querySelectorAll("[name='section[]']")].forEach((s, j) => s.selectedIndex = [...s.options].findIndex(o => o.value.toString() === innerSections[j].toString()));
+                                    [...p.querySelectorAll(".section")].forEach((sr, jj) => {
+                                        const innerCategories = [...new Set(categories.filter(cat => studiesInfo.find((s) => s.categoryRef.toString() === cat.toString() && s.sectionRef.toString() === innerSections[jj].toString() && s.productRef.toString() === products[j].toString())))]
+                                        addCategories(() => innerCategories.length, sr);
+                                        [...sr.querySelectorAll("[name='category[]']")].forEach((s, j) => s.selectedIndex = [...s.options].findIndex(o => o.value.toString() === innerCategories[j].toString()));
+                                        [...sr.querySelectorAll(".category")].forEach((cr, jjj) => {
+                                            const innerStudies = studiesInfo
+                                                .filter(s => s.categoryRef.toString() === innerCategories[jjj].toString() && s.sectionRef.toString() === innerSections[jj].toString() && s.productRef.toString() === products[j].toString())
+                                                .sort((a, b) => parseInt(a.studyOrder) - parseInt(b.studyOrder))
+                                                .map(s => s.studyId);
+                                            addStudies(() => innerStudies.length, cr);
+                                            [...cr.querySelectorAll("[name='study[]']")].forEach((s, j) => s.selectedIndex = [...s.options].findIndex(o => o.value.toString() === innerStudies[j].toString()));
+                                        })
+                                    });
+                                });
+                                // vari cicli innestati
+                                // x ogni product drag -> fai addSections
+                                // sezioni e categorie li prendi dopo con filter
+                                // li prendi filtrando studiesInfo dove il prodotto è uguale a quello corrente e poi mappando a sectionRef
+                                // x ogni section drag -> add categ
+                                // filtro simile ma filtri sia su prodotto che sezione e torni categoria
+                                // x ogni cat drag -> studies
+                                // gli studi vengono infinite ordinati con sort via studyOrder
                             }
                             break;
                         default:
@@ -78,12 +138,49 @@
                     }
                 });
 
-
-                //document.querySelector(".updateid").value = id
-
-
             }
         })
+
+        function makeDraggables() {
+            let dragindex = 0;
+            let dropindex = 0;
+            let clone = "";
+
+            function drag(e) {
+                e.dataTransfer.setData("text", e.target.id);
+            }
+
+            function drop(e) {
+                e.preventDefault();
+                clone = e.target.closest(".draggableGroup").cloneNode(true);
+                clone.querySelector("select").selectedIndex = e.target.closest(".draggableGroup").querySelector("select").selectedIndex;
+                let data = e.dataTransfer.getData("text");
+                let nodelist = document.getElementById("parent").childNodes;
+                for (let i = 0; i < nodelist.length; i++) {
+                    if (nodelist[i].id == data) {
+                        dragindex = i;
+                    }
+
+                }
+                document.getElementById("parent").replaceChild(document.getElementById(data), e.target.closest(".draggableGroup"));
+                document.getElementById("parent").insertBefore(clone, document.getElementById("parent").childNodes[dragindex]);
+            }
+
+            function allowDrop(e) {
+                e.preventDefault();
+            }
+
+            let numberOfDraggables = 1;
+
+            function changeNumberOfDraggables(cb) {
+                numberOfDraggables = Math.min(100, Math.max(1, cb(numberOfDraggables)));
+                document.getElementById('groupsStyle').innerHTML =
+                    `.draggableGroup:nth-of-type(n+${numberOfDraggables+1}) { display: none; }`;
+                document.querySelectorAll(`.draggableGroup:nth-of-type(n+${numberOfDraggables+1}) select`).forEach((s) => s.selectedIndex = 0);
+                return false;
+            }
+            return [drag, drop, allowDrop, changeNumberOfDraggables];
+        }
     </script>
 
 

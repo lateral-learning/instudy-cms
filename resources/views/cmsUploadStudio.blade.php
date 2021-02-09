@@ -28,7 +28,9 @@
                     @foreach ($products as $product)
                     <option value="{{ $product->id }}">{{ $product->name }}</option>
                     @endforeach
-                </select>
+                </select> Oppure
+                <input name="newproduct" placeholder="Nuovo prodotto" />
+                <input name="newproductcolor" type="color" />
             </label>
             <label>
                 Sezione
@@ -36,7 +38,8 @@
                     @foreach ($sections as $section)
                     <option value="{{ $section->id }}">{{ $section->name }}</option>
                     @endforeach
-                </select>
+                </select> Oppure
+                <input name="newsection" placeholder="Nuova sezione" />
             </label>
             <label>
                 Categoria
@@ -44,7 +47,9 @@
                     @foreach ($categories as $category)
                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
-                </select>
+                </select> Oppure
+                <input name="newcategory" placeholder="Nuova categoria" />
+                <input name="newcategorycolor" type="color" />
             </label>
             <label>
                 Groups
@@ -93,8 +98,9 @@
             <label>Data fine
                 <input name="enddate" type="datetime-local" />
             </label>
-            <input type="submit" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
-
+            <input type="submit" name="invia" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
+            <br />
+            <input type="submit" name="delete" value="" onclick="if(confirm('Vuoi davvero cancellare l\'elemento?')){this.disabled=true; this.value='Attendere...'; document.querySelector('[name=updateid]').setAttribute('name', 'deleteid'); this.form.submit();} return false;" style="border:2px solid red; color:red; width:150px;margin-top:18px;margin-right:auto;" />
         </form>
 
 
@@ -153,9 +159,9 @@
                     "columnDefs": [{
                         "render": function(data, type, row) {
                             return `<a class='linkUpdate' href='javascript:void(0);' ${toDataAttributes({
-                                updateid:row[0], namestudy:row[1], product:row[3], section:row[4], category:row[5],
-                                order: row[6], search: row[7], type: row[8], launcher:row[9],
-                                startdate: row[11].replace(" ", "T"), enddate:row[12].replace(" ", "T"), studygroups: row[13]
+                                updateid:row[0], namestudy:row[1], product:row[2], section:row[3], category:row[4],
+                                order: row[5], search: row[6], type: row[7], launcher:row[8],
+                                startdate: row[10].replace(" ", "T"), enddate:row[11].replace(" ", "T"), studygroups: row[12]
                             })}>${data}</a>`;
                         },
                         "targets": 0

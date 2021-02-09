@@ -26,10 +26,13 @@ class UploadFileController extends Controller
     public function index(Request $request)
     {
         $updateStudyRef = !empty($request->input('updateid')) ? intval($request->input('updateid')) : 0;
-        [$fileZIP, $filePNG, $fileZIPname] = $this->getFileData($request, $updateStudyRef);
-        [$studyData, $groupData] = $this->getRequestData($request, $fileZIPname);
-        $this->execQueries($studyData, $groupData, $updateStudyRef);
-        $this->fileOperations($fileZIP, $filePNG, $fileZIPname, $studyData['launcher']);
+        $deleteStudyRef = !empty($request->input('deleteid')) ? intval($request->input('deleteid')) : 0;
+        if (empty($deleteStudyRef))
+            [$fileZIP, $filePNG, $fileZIPname] = $this->getFileData($request, $updateStudyRef);
+        [$studyData, $groupData, $newData] = $this->getRequestData($request, $fileZIPname ?? "");
+        $studyRef = $this->execQueries($studyData, $groupData ?? [], $newData, $updateStudyRef, $deleteStudyRef);
+        if (empty($deleteStudyRef))
+            $this->fileOperations($fileZIP, $filePNG, $fileZIPname, $studyData['launcher'], $studyRef ?? $updateStudyRef);
         $this->DB->commit();
         return view('success');
     }
@@ -64,12 +67,22 @@ class UploadFileController extends Controller
             "startdate" => date("Y-m-d H:i:s", strtotime($request->input('startdate'))),
             "enddate" =>  date("Y-m-d H:i:s", strtotime($request->input('enddate')))
         ];
-        return [$studyData, $groupData];
+        $newData = [
+            "newproduct" => $request->input('newproduct'),
+            "newsection" => $request->input('newsection'),
+            "newcategory" => $request->input('newcategory'),
+            "newproductcolor" => $request->input('newproductcolor'),
+            "newcategorycolor" => $request->input('newcategorycolor')
+        ];
+        return [$studyData, $groupData, $newData];
     }
 
-    protected function fileOperations($fileZIP, $filePNG, String $fileZIPname, String $studyLauncher)
+    protected function fileOperations($fileZIP, $filePNG, String $fileZIPname, String $studyLauncher, Int $studyRef)
     {
         $ROOT = UploadFileController::ROOT;
+
+        // questa riga rende il nome uguale all'id, levarla se non serve
+        $fileZIPname = $studyRef;
 
         if (!empty($fileZIP)) {
 
@@ -103,18 +116,25 @@ class UploadFileController extends Controller
         file_put_contents($storyFile, $file_data);*/
     }
 
-    protected function execQueries(array $studyData, array $groupData, Int $updateStudyRef)
+    protected function execQueries(array $studyData, array $groupData, array $newData, Int $updateStudyRef, Int $deleteStudyRef)
     {
         $this->DB->beginTransaction();
-        $updateOrder = !empty($updateStudyRef) ? " AND studyId!=$updateStudyRef" : '';
-        $this->alterOrder->pushOrder($studyData['order'], "categoryRef={$studyData['category']} $updateOrder");
-        if (empty($updateStudyRef)) {
-            $studyRef = $this->insertStudy($studyData);
+        if (empty($deleteStudyRef)) {
+            $orderSkipUpdated = !empty($updateStudyRef) ? " AND studyId!=$updateStudyRef" : '';
+            $this->alterOrder->pushOrder($studyData['order'], "categoryRef={$studyData['category']} $orderSkipUpdated");
+            $this->assignSubItems($studyData, $newData);
+            if (empty($updateStudyRef)) {
+                $studyRef = $this->insertStudy($studyData);
+            } else {
+                $this->updateStudy($studyData, $updateStudyRef);
+                $this->deleteGroupStudyRelations($updateStudyRef);
+            }
+            $this->insertGroupStudyRelations($groupData, $studyRef ?? $updateStudyRef);
         } else {
-            $this->updateStudy($studyData, $updateStudyRef);
-            $this->deleteGroupStudyRelations($updateStudyRef);
+            $this->deleteGroupStudyRelations($deleteStudyRef);
+            $this->deleteStudy($deleteStudyRef);
         }
-        $this->insertGroupStudyRelations($groupData, $studyRef ?? $updateStudyRef);
+        return $studyRef ?? null;
     }
 
     protected function insertStudy(array $studyData)
@@ -136,6 +156,14 @@ class UploadFileController extends Controller
         );
     }
 
+    protected function deleteStudy(Int $deleteStudyRef)
+    {
+        $this->DB->update(
+            "DELETE FROM instudy_studies WHERE studyId=?",
+            [$deleteStudyRef]
+        );
+    }
+
     protected function insertGroupStudyRelations(array $groupData, Int $studyRef)
     {
         $countGroups = count($groupData);
@@ -154,5 +182,31 @@ class UploadFileController extends Controller
             "DELETE FROM `instudy_group-study` WHERE studyRef=?",
             [$updateStudyRef]
         );
+    }
+
+    protected function insertSubItem(String $tableType, array $data)
+    {
+        $keys = implode(',', array_keys($data));
+        $placeholders = implode(',', array_fill(0, count($data), '?'));
+        $this->DB->insert(
+            "INSERT INTO `instudy_$tableType` ($keys) VALUES ($placeholders)",
+            array_values($data)
+        );
+        return $this->insertedID();
+    }
+
+    protected function addSubItem(String $tableType, String $type, String $key, array &$studyData, array $newData)
+    {
+        if (!empty($newData["new$type"])) {
+            $data = [$key => $newData["new$type"]];
+            if (!empty($newData["new{$type}color"])) $data['colour'] = $newData["new{$type}color"];
+            $studyData[$type] =  $this->insertSubItem($tableType, $data);
+        }
+    }
+    protected function assignSubItems(array &$studyData, array $newData)
+    {
+        $this->addSubItem("products", "product", "productName", $studyData, $newData);
+        $this->addSubItem("sections", "section", "sectionName", $studyData, $newData);
+        $this->addSubItem("categories", "category", "name", $studyData, $newData);
     }
 }

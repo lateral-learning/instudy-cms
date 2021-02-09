@@ -48,10 +48,28 @@
                     function allowDrop(e) {
                         e.preventDefault();
                     }
+
+                    let numberOfDraggables = 1;
+
+                    function changeNumberOfDraggables(cb) {
+                        numberOfDraggables = Math.min(100, Math.max(1, cb(numberOfDraggables)));
+                        document.getElementById('groupsStyle').innerHTML =
+                            `.draggableGroup:nth-of-type(n+${numberOfDraggables+1}) { display: none; }`;
+                        document.querySelectorAll(`.draggableGroup:nth-of-type(n+${numberOfDraggables+1}) select`).forEach((s) => s.selectedIndex = 0);
+                        return false;
+                    }
                 </script>
                 Groups
-                <p class="warner">Le select con valori nulli o duplicati vengono automaticamente ignorate</p>
-                @foreach (range(0,15) as $rangeIndex)
+                <br />
+                <button onclick="return changeNumberOfDraggables((n)=>n+1);">Aggiungi</button>
+                <button onclick="return changeNumberOfDraggables((n)=>n-1);">Rimuovi</button>
+                <br /><br />
+                <style id="groupsStyle">
+                    .draggableGroup:nth-of-type(n+2) {
+                        display: none;
+                    }
+                </style>
+                @foreach (range(0,100) as $rangeIndex)
                 <div class="draggableGroup" style="width:280px;background:#aaa;" id="draggable{{$rangeIndex}}" draggable="true" ondragstart="drag(event)" ondrop="drop(event)" ondragover="allowDrop(event)">
                     <select name="groups[]">
                         <option value="" selected />Nessuna selezione</option>
@@ -64,10 +82,10 @@
                     drag 🕂
                 </div>
                 @endforeach
-                <p class="warner">Il numero di select è fisso ma può essere aumentato nel codice</p>
             </div>
-
-            <input type="submit" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
+            <input type="submit" name="invia" value="Invia" onclick="if(this.form.checkValidity()){this.disabled=true; this.value='Attendere...'; this.form.submit();}" style="width:150px;margin-top:18px;margin-right:auto;" />
+            <br />
+            <input type="submit" value="" name="delete" onclick="if(confirm('Vuoi davvero cancellare l\'elemento?')){this.disabled=true; this.value='Attendere...'; document.querySelector('[name=updateid]').setAttribute('name', 'deleteid'); this.form.submit();} return false;" style="border:2px solid red; color:red; width:150px;margin-top:18px;margin-right:auto;" />
         </form>
     </div>
     <div class="flex column w50 panelContainer">

@@ -32,9 +32,13 @@ Route::get('/cmsUploadStudy', [App\Http\Controllers\cmsUploadFileController::cla
 
 Route::get('/cmsAddUser', [App\Http\Controllers\cmsAddUserController::class, 'index']);
 
+Route::get('/cmsGroup', [App\Http\Controllers\cmsGroupController::class, 'index']);
+
 Route::post('/uploadStudy', [App\Http\Controllers\UploadFileController::class, 'index']);
 
 Route::post('/addUser', [App\Http\Controllers\AddUserController::class, 'index']);
+
+Route::post('/group', [App\Http\Controllers\GroupController::class, 'index']);
 
 Route::get('/resetPassword', [App\Http\Controllers\ResetPasswordController::class, 'index']);
 

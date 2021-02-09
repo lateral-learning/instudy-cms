@@ -49,6 +49,16 @@ h1 {
     flex-grow: 1;
 }
 
+.w70 {
+    flex-basis: 60%;
+    flex-grow: 1;
+}
+
+.w30 {
+    flex-basis: 40%;
+    flex-grow: 1;
+}
+
 .panelContainer {
     overflow: scroll;
     padding: 20px;
