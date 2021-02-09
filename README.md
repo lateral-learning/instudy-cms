@@ -61,11 +61,10 @@ php artisan config:clear
 
 ## INSTALLAZIONE SU SHARED HOSTING APACHE
 
-1. Istruzioni base per installazione
-   https://stackoverflow.com/questions/41407758/how-to-install-laravel-app-in-subfolder-of-shared-host
-2. modificare il file .ENV per mettere i dati giusti (avendo due database come descritto prima)
-3. Proteggere tutti i dati sempre tramite .htaccess
+1. modificare il file .ENV per mettere i dati giusti (avendo due database come descritto prima)
+2. Proteggere tutti i dati sempre tramite .htaccess
    https://gist.github.com/shakee93/7222b7f2429b467731211cd0dce35410
+3. Accedere presso la sotto cartella public
 
 ## MAIL DI RESET
 

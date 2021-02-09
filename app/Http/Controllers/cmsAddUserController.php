@@ -33,7 +33,9 @@ class cmsAddUserController extends Controller
             FROM instudy_users
             INNER JOIN `instudy_user-group`
             ON `instudy_user-group`.userRef=instudy_users.userId
-            GROUP BY instudy_users.userId, instudy_users.email, instudy_users.name, instudy_users.firstLogin, instudy_users.lastLogin, instudy_users.totalAccesses, instudy_users.lastDevice, instudy_users.policy, instudy_users.division, instudy_users.passwordRef
+            GROUP BY instudy_users.userId, instudy_users.email, instudy_users.name, instudy_users.firstLogin,
+            instudy_users.lastLogin, instudy_users.totalAccesses, instudy_users.lastDevice, instudy_users.policy,
+            instudy_users.division, instudy_users.passwordRef, instudy_users.fullView
         "
         );
         return view('cmsAddUser', $data);
