@@ -70,7 +70,7 @@ class AddUserController extends Controller
             "INSERT INTO instudy_users (name,email,policy,division,passwordRef,lastDevice)
             VALUES(?,?,?,?,?,'')
         ",
-            [...array_values($userData), $passwordRef] // strip off the keys and add passwordRef
+            array_merge(array_values($userData), [$passwordRef]) // strip off the keys and add passwordRef
         );
         return $this->insertedID();
     }
@@ -79,7 +79,7 @@ class AddUserController extends Controller
     {
         $this->DB->update(
             "UPDATE instudy_users SET name=?, email=?, policy=?, division=? WHERE userId=?",
-            [...array_values($userData), $updateUserRef]
+            array_merge(array_values($userData), [$updateUserRef])
         );
     }
 

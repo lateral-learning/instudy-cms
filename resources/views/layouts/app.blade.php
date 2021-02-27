@@ -59,8 +59,8 @@
                     if (k === "studygroups") v = v.split(',');
                     switch (k) {
                         case "groups":
+                            const groupSelects = [...document.querySelectorAll("[name='groups[]']")];
                             if (v) {
-                                const groupSelects = [...document.querySelectorAll("[name='groups[]']")];
                                 const groups = v.split(',');
                                 changeNumberOfDraggables(() => groups.length);
                                 groups.forEach((g, i) => {
@@ -70,6 +70,9 @@
                                         o.innerText === g
                                     );
                                 })
+                            } else {
+                                // se non ci sono gruppi bisogna manualmente resettare il primo a 0
+                                groupSelects[0].selectedIndex = 0;
                             }
                             break;
                         case "users":

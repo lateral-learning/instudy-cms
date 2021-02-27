@@ -2040,7 +2040,6 @@ window.groupStudiesToJSON = function () {
   });
   var toString = JSON.stringify(data);
   document.querySelector("[name='studiesjson']").value = toString;
-  debugger;
 };
 /*window.groupStudiesToJSON = function () {
     /* struttura dati

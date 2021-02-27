@@ -14,7 +14,10 @@ trait CheckFileUpload
                 if ($extension !== "zip" || !count($toCheckFiles) || $this->checkFilesInsideZIP($file->path(), $toCheckFiles))
                     return $file;
             }
+        } else {
+            echo 'IL FILE NON E\' STATO NEMMENO INVIATO';
         }
+        echo 'FILE CHECK FALLITO';
         //abort(406, "Assente il file .$extension di nome $fieldName");
         return null;
     }
@@ -37,7 +40,7 @@ trait CheckFileUpload
         $zip = $this->getZIP($filePath);
         $filesInside = [];
         for ($i = 0; $i < $zip->count(); $i++) {
-            array_push($filesInside, $zip->getNameIndex($i));
+            array_push($filesInside, str_replace('\\', '/', $zip->getNameIndex($i)));
         }
         return $filesInside;
     }
@@ -46,6 +49,7 @@ trait CheckFileUpload
     {
         $filesInside = $this->getFilesInsideZIP($filePath);
         $intersection = array_intersect($toCheckFiles, $filesInside);
+        //var_dump($intersection);
         if (count($intersection) === count($toCheckFiles)) {
             return true;
         }
@@ -71,7 +75,7 @@ trait CheckFileUpload
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
         foreach ($files as $name => $file) {
-            if (!$file->isDir()) {
+            if ($file->getType() === "file") {
                 $filePath = $file->getRealPath();
                 $relativePath = substr($filePath, strlen($rootPath) + 1);
                 $zip->addFile($filePath, $relativePath);

@@ -144,7 +144,7 @@
                     dom: 'Plfrtip',
                     "columnDefs": [{
                         "render": function(data, type, row) {
-                            return `<a class='linkUpdate' href='javascript:void(0);' ${toDataAttributes({updateid:row[0], mail:row[1], nameuser:row[2], division:row[8], groups:row[10]})}>${data}</a>`;
+                            return `<a class='linkUpdate' href='javascript:void(0);' ${toDataAttributes({updateid:row[0], mail:row[1], nameuser:row[2], division:row[8], groups:row[11]})}>${data}</a>`;
                         },
                         "targets": 0
                     }]

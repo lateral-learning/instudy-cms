@@ -92,7 +92,7 @@ class UploadFileController extends Controller
             if ($studyLauncher === "story.html" || $studyLauncher === "story_html5.html")
                 $this->modifyFiles($folderPath, $studyLauncher);
 
-            $this->createZIPFromFolder($folderPath, "$ROOT/projectsRepo/", "{$fileZIPname}.zip");
+            $this->createZIPFromFolder($folderPath, "$ROOT/projectRepo/", "{$fileZIPname}.zip");
         }
 
         if (!empty($filePNG)) {
@@ -152,7 +152,7 @@ class UploadFileController extends Controller
         $this->DB->update(
             "UPDATE instudy_studies SET name=?,code=?,productRef=?,sectionRef=?,categoryRef=?,studyOrder=?,search=?,type=?,launcher=?,startDate=?,endDate=?
              WHERE studyId=?",
-            [...array_values($studyData), $updateStudyRef]
+            array_merge(array_values($studyData), [$updateStudyRef])
         );
     }
 
